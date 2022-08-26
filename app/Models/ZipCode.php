@@ -11,13 +11,13 @@ class ZipCode extends Model
 
     protected $fillable = ['zip_code', 'locality', 'municipality_id'];
     public $timestamps  = false;
-
+    protected $primaryKey = 'zip_code';
 
     public function municipality()
     {
         return $this->belongsTo(Municipality::class);
     }
-    
+
     public function settlements()
     {
         return $this->hasMany(Settlement::class);
