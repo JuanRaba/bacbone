@@ -26,9 +26,8 @@ class DataImport implements ToCollection, WithHeadingRow
                     'code'=>$row['c_cp']
                 ]);
 
-                $m = Municipality::firstOrCreate(['key' => $row['c_mnpio']],[
+                $m = Municipality::firstOrCreate(['key' => $row['c_mnpio'], 'federal_entity_key'=>$row['c_estado']],[
                     'name'=>$row['d_mnpio'],
-                    'federal_entity_key'=>$f->key,
                 ]);
 
                 $z = ZipCode::firstOrCreate(['zip_code' => $row['d_codigo']],[
@@ -41,7 +40,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'name'=>$row['d_asenta'],
                     'zone_type'=>$row['d_zona'],
                     'settlement_type'=>json_encode(["name"=>$row['d_tipo_asenta']]),
-                    'zip_code_zip_code'=>$z->zip_code,
+                    'zip_code_zip_code'=>$row['d_codigo'],
                 ]);
             }catch(QueryException $e){
                 dump($row);
