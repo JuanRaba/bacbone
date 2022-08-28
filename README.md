@@ -10,4 +10,5 @@ Luego correr los siguientes comandos:
 6. `docker-compose exec laravel.test php artisan key:generate`
 7. `docker-compose exec laravel.test php artisan migrate`
 8. `docker-compose exec laravel.test php artisan db:seed`
+9. `docker-compose exec laravel.test php artisan scout:import "App\Models\ZipCode"`
 

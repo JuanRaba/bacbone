@@ -14,9 +14,11 @@ class Controller extends BaseController
 
     public function __invoke($codigo)
     {
-        $zipcode = ZipCode::with('municipality','settlements')->find($codigo);
-        if(!$zipcode) abort(404);
-        $zipcode->zip_code = $zipcode->zip_code < 10000 ? "0".$zipcode->zip_code : $zipcode->zip_code;
-        return json_encode($zipcode,JSON_UNESCAPED_UNICODE);
+        $zipcode= ZipCode::search($codigo)->raw()['hits'][0];
+
+        if ($codigo != $zipcode['zip_code']) abort(404);
+
+        $zipcode['zip_code'] = strlen($codigo) < 5 ? "0".$codigo : $codigo;
+        return  $zipcode;
     }
 }
