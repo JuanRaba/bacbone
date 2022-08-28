@@ -22,25 +22,25 @@ class DataImport implements ToCollection, WithHeadingRow
             try{
 
                 $f = FederalEntity::firstOrCreate(['key' => $row['c_estado']],[
-                    'name'=>$row['d_estado'],
+                    'name'=>$this->normalizeData($row['d_estado']),
                     'code'=>$row['c_cp']
                 ]);
 
-                $m = Municipality::firstOrCreate(['key' => $row['c_mnpio'], 'federal_entity_key'=>$row['c_estado']],[
-                    'name'=>$row['d_mnpio'],
+                $m = Municipality::firstOrCreate(['key' => $row['c_mnpio'], 'federal_entity_key'=>$f->key],[
+                    'name'=>$this->normalizeData($row['d_mnpio']),
                 ]);
 
                 $z = ZipCode::firstOrCreate(['zip_code' => $row['d_codigo']],[
-                    'locality'=>$row['d_ciudad']??"",
+                    'locality'=>$this->normalizeData($row['d_ciudad']??""),
                     'municipality_id'=>$m->id,
                 ]);
 
                 Settlement::create([
                     'key' => $row['id_asenta_cpcons'],
-                    'name'=>$row['d_asenta'],
+                    'name'=>$this->normalizeData($row['d_asenta']),
                     'zone_type'=>$row['d_zona'],
-                    'settlement_type'=>json_encode(["name"=>$row['d_tipo_asenta']]),
-                    'zip_code_zip_code'=>$row['d_codigo'],
+                    'settlement_type'=>["name"=>$row['d_tipo_asenta']],
+                    'zip_code_zip_code'=>$z->zip_code,
                 ]);
             }catch(QueryException $e){
                 dump($row);
@@ -48,6 +48,11 @@ class DataImport implements ToCollection, WithHeadingRow
             }
 
         }
+    }
+    public function normalizeData($value)
+    {
+        $tildes= ['á'=>'a', 'é'=>'e','í'=>'i','ó'=>'o', 'ú'=>'u'];
+        return strtoupper(str_replace(array_keys($tildes), array_values($tildes), strtolower($value)));
     }
 
 }
